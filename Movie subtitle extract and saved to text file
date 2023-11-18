@@ -1,6 +1,5 @@
 import os
 import zipfile
-import string
 
 def extract_zip_files(source_dir, destination_dir):
     os.makedirs(destination_dir, exist_ok=True)
@@ -8,9 +7,13 @@ def extract_zip_files(source_dir, destination_dir):
         for file in files:
             if file.endswith(".zip"):
                 zip_file_path = os.path.join(root, file)
-                with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-                    zip_ref.extractall(destination_dir)
-                print(f"Extracted: {file}")
+                try:
+                    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                        zip_ref.extractall(destination_dir)
+                    print(f"Extracted: {file}")
+                except zipfile.BadZipFile:
+                    print(f"Skipping {file}. Not a valid ZIP file.")
+                    continue  # Move to the next file
 
 def filter_english_text(input_dir, output_file):
     total_words = 0
@@ -38,7 +41,7 @@ def filter_english_text(input_dir, output_file):
 # Specify the source and destination directories
 source_directory = r'C:\Users\style\Desktop\Movies srt files Zip Over 38k Files'
 destination_directory = r'C:\Users\style\Desktop\Movies srt files Zip Over 38k Files'
-filtered_output_file = r'C:\Users\style\Desktop\Movies srt files Zip Over 38k Files\movie zip files extracted text.txt'
+filtered_output_file = r'C:\Users\style\Desktop\Movies srt files Zip Over 38k Files\filteredmovie.txt'
 
 # Call the function to extract zip files
 extract_zip_files(source_directory, destination_directory)
