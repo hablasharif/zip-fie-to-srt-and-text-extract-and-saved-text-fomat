@@ -1,0 +1,50 @@
+import os
+import zipfile
+import string
+
+def extract_zip_files(source_dir, destination_dir):
+    os.makedirs(destination_dir, exist_ok=True)
+    for root, dirs, files in os.walk(source_dir):
+        for file in files:
+            if file.endswith(".zip"):
+                zip_file_path = os.path.join(root, file)
+                with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                    zip_ref.extractall(destination_dir)
+                print(f"Extracted: {file}")
+
+def filter_english_text(input_dir, output_file):
+    total_words = 0
+    unique_words = set()
+
+    with open(output_file, 'w', encoding='utf-8') as output:
+        for root, dirs, files in os.walk(input_dir):
+            for file in files:
+                if file.lower().endswith(".srt"):
+                    subtitle_file_path = os.path.join(root, file)
+                    with open(subtitle_file_path, 'r', encoding='utf-8', errors='ignore') as subtitle:
+                        lines = subtitle.readlines()
+                        for line in lines:
+                            # Remove symbols, punctuation, and numbers, add double space
+                            cleaned_line = '  '.join(''.join(char if char.isalpha() or char.isspace() else ' ' for char in line).split())
+                            output.write(cleaned_line + '\n')
+
+                            # Count words and unique words
+                            words = cleaned_line.split()
+                            total_words += len(words)
+                            unique_words.update(words)
+
+    return total_words, len(unique_words)
+
+# Specify the source and destination directories
+source_directory = r'C:\Users\style\Desktop\Movies srt files Zip Over 38k Files'
+destination_directory = r'C:\Users\style\Desktop\Movies srt files Zip Over 38k Files'
+filtered_output_file = r'C:\Users\style\Desktop\Movies srt files Zip Over 38k Files\movie zip files extracted text.txt'
+
+# Call the function to extract zip files
+extract_zip_files(source_directory, destination_directory)
+
+# Call the function to filter English text and count words
+total_words, unique_words_count = filter_english_text(destination_directory, filtered_output_file)
+
+print(f'Total Words: {total_words}')
+print(f'Total Unique Words: {unique_words_count}')
